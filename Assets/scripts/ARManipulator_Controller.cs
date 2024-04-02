@@ -16,7 +16,7 @@ public class ARManipulator_Controller : MonoBehaviour
     public float bentSpeed = 0.1f;
 
     public float maxAngel = 3f;
-    public float trigger = 0f;
+    public float trigger = 1f;
     public GameObject toolTipObject;
     // private Rigidbody rb;
     private float movementX;

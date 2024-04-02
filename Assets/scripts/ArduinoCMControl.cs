@@ -65,7 +65,7 @@ public class ArduinoCMControl : MonoBehaviour
         }
 
         foreach (var link in LinkObjects) {
-             Debug.Log($"Rotating {link.name} to Z rotation of {CMSignal}");
+            //  Debug.Log($"Rotating {link.name} to Z rotation of {CMSignal}");
             link.transform.localRotation = Quaternion.Euler(0, 0, CMSignal);
         }
         //read button value
