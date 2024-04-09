@@ -59,6 +59,9 @@ public class ArduinoCMControl : MonoBehaviour
         
         //set bend status depends on CMSignal
         CMSignal = uDPListener.CMSignal;
+        float bendAngle = (CMSignal-730)/60;
+        print("CMSignal: " + CMSignal);
+        print("bendAngle: " + bendAngle);
         if (CMSignal > maxAngel)
         {
             CMSignal = maxAngel;
@@ -66,7 +69,7 @@ public class ArduinoCMControl : MonoBehaviour
 
         foreach (var link in LinkObjects) {
             //  Debug.Log($"Rotating {link.name} to Z rotation of {CMSignal}");
-            link.transform.localRotation = Quaternion.Euler(0, 0, CMSignal);
+            link.transform.localRotation = Quaternion.Euler(0, 0, bendAngle);
         }
         //read button value
         // {

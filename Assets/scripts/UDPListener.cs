@@ -12,7 +12,7 @@ public class UDPListener : MonoBehaviour
     private bool isListening = true;
     public int listenPort = 50000;
 
-    public float CMSignal = 0;
+    public float CMSignal = 730;
 
     void Start()
     {
@@ -41,7 +41,7 @@ public class UDPListener : MonoBehaviour
 
                 if (receivedText.StartsWith("CMSignal")){
                     CMSignal = float.Parse(receivedText.Split(' ')[1]);
-                    print("Received CMSignal: " + CMSignal);
+                    // print("Received CMSignal: " + CMSignal); 
                 }else{
                     print("Received: " + receivedText + " from " + remoteEndPoint);
                 }
