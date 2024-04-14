@@ -5,16 +5,16 @@ using System.Linq;
 
 public class radar : MonoBehaviour
 {
+    public MyUtils myUtils;
     public GameObject centerObject;
 
     public GameObject radarPointObject;
-    public GameObject[] radarObjects;
 
     public float radarRadius = 6f;
 
     public float scale = 0.5f;
 
-    private GameObject CurrentPoint;
+    private GameObject nextPoint;
 
     public GameObject tooltipGameObject;
 
@@ -24,8 +24,12 @@ public class radar : MonoBehaviour
 
     private VerticalBarController verticalBarController;
     // Start is called before the first frame update
+    private GameObject[] guidingPoints;
+
+    private GameObject[] activePoints;
     void Start()
     {
+        myUtils=GameObject.Find("MyUtils").GetComponent<MyUtils>();
         if (centerObject == null)
         {
             centerObject = GameObject.Find("Continuum_Manipulator");
@@ -34,10 +38,11 @@ public class radar : MonoBehaviour
         {
             radarPointObject = GameObject.Find("radar point");
         }
-        var Points=GameObject.Find("Guiding Points").GetComponentsInChildren<Transform>();
-        radarObjects = Points.Skip(1).Select(p => p.gameObject).ToArray();
-        var firstPointLocation = radarObjects[0].transform.position;
-        Vector3 relativePosition = centerObject.transform.InverseTransformPoint(radarObjects[0].transform.position);
+
+        guidingPoints = myUtils.guidingPoints;
+        activePoints = myUtils.activePoints;
+        var firstPointLocation = guidingPoints[0].transform.position;
+        Vector3 relativePosition = centerObject.transform.InverseTransformPoint(guidingPoints[0].transform.position);
         print("relative position is " + relativePosition);
         //constrain the relative position to a circle(less than radarRadius)
         if (relativePosition.magnitude > radarRadius)
@@ -55,23 +60,24 @@ public class radar : MonoBehaviour
         
     }
     void FixedUpdate(){
-        var activePoints = radarObjects.Where(p => p.activeSelf);
+        guidingPoints = myUtils.guidingPoints;
+        activePoints = myUtils.activePoints;
         //number
         tooltipController.pointCount=activePoints.Count();
         if (activePoints.Count() == 0)
         {
             // Debug.Log("No guiding points found");
-            CurrentPoint=null;
+            nextPoint=null;
         }
         else
         {
-            CurrentPoint=activePoints.FirstOrDefault();
-            tooltipController.distance=(float)Vector3.Distance(CurrentPoint.transform.position, centerObject.transform.position);
+            nextPoint=activePoints.FirstOrDefault();
+            tooltipController.distance=(float)Vector3.Distance(nextPoint.transform.position, centerObject.transform.position);
             
             //find global y axis distance 
-            verticalBarController.distance= (float)(CurrentPoint.transform.position.y-centerObject.transform.position.y);
-            // verticalBarController.distance=(float)Vector3.Distance(CurrentPoint.transform.position, centerObject.transform.position);
-            // print("current point is "+CurrentPoint);
+            verticalBarController.distance= (float)(nextPoint.transform.position.y-centerObject.transform.position.y);
+            // verticalBarController.distance=(float)Vector3.Distance(nextPoint.transform.position, centerObject.transform.position);
+            // print("current point is "+nextPoint);
         }
         
     }
@@ -79,14 +85,13 @@ public class radar : MonoBehaviour
     void Update()
     {
         //find first active point
-        var activePoints = radarObjects.Where(p => p.activeSelf);
-        if (CurrentPoint == null)
+        if (nextPoint == null)
         {
             // Debug.Log("No guiding points found");
         }
         else
         {
-            Vector3 relativePosition = centerObject.transform.InverseTransformPoint(CurrentPoint.transform.position);
+            Vector3 relativePosition = centerObject.transform.InverseTransformPoint(nextPoint.transform.position);
             //times scale
             relativePosition = relativePosition * scale;
             //constrain the relative position to a circle(less than radarRadius)
