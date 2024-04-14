@@ -5,6 +5,14 @@ using System.Linq;
 public class MyUtils : MonoBehaviour
 {
     // Start is called before the first frame update
+    public enum State
+    {
+        PreDrilling,
+        Drilling,
+        Bending,
+        Finished
+    }
+
 
     public GameObject[] guidingPoints;
 
@@ -13,6 +21,10 @@ public class MyUtils : MonoBehaviour
     public GameObject nextPoint;
 
     public GameObject prevPoint;
+
+    public State state=State.PreDrilling;
+
+    
     void Start()
     {
         // initial for guiding points
@@ -43,6 +55,16 @@ public class MyUtils : MonoBehaviour
     void Update()
     {
         PointUpdate();
+        //if first guiding point is deactivated, change state to drilling
+        if (state == State.PreDrilling && guidingPoints[0].activeSelf == false)
+        {
+            state = State.Drilling;
+        }
+        //if no guiding points left, change state to finished
+        if (activePoints.Length == 0)
+        {
+            state = State.Finished;
+        }
         
     }
 }
