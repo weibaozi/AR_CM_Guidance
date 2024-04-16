@@ -27,6 +27,8 @@ public class guiding : MonoBehaviour
             Debug.Log("guiding points found");
             var firstPointLocation = guidingPoints[0].transform.position;
             var startlocation = GameObject.Find("Drill Point").transform.position;
+            //move the manipulator to the start location
+            guidingManipulator.transform.position = startlocation;
             // print("1st point location is " + firstPointLocation + "start location is " + startlocation);
             Vector3 directionToTarget =    firstPointLocation - startlocation;
             // print("direction to target is " + directionToTarget);
@@ -63,21 +65,9 @@ public class guiding : MonoBehaviour
             Vector3 directionToTarget =    firstPointLocation - startlocation;
             //if z is positive
             // Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-            if (firstPointLocation.z > 0 )
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget,Vector3.down);
-                targetRotation = Quaternion.Euler(270, 0, 0) * targetRotation;
-                guidingManipulator.transform.rotation = targetRotation;
-                guidingManipulator.transform.Rotate(new Vector3(0.0f, 90.0f, 0.0f));
-            }else
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-                targetRotation = Quaternion.Euler(270, 0, 0) * targetRotation;
-                guidingManipulator.transform.rotation = targetRotation;
-                guidingManipulator.transform.Rotate(new Vector3(0.0f, 180.0f, 0.0f));
-                guidingManipulator.transform.Rotate(new Vector3(0.0f, 90.0f, 0.0f));
-            }
-            
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget,Vector3.down);
+                // targetRotation = Quaternion.Euler(270, 0, 0) * targetRotation;
+            guidingManipulator.transform.rotation = targetRotation;
 
             //if first guding point is deactivated, then deactivate the guiding manipulator
             if (guidingPoints[0].activeSelf == false)

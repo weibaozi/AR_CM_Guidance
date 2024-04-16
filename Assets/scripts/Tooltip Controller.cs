@@ -38,6 +38,7 @@ public class TooltipController : MonoBehaviour
         {
             if (trigger > 0.5f)
             {
+                // the point set to inactive
                 other.gameObject.SetActive(false);
                 audioSource.Play();
             }
