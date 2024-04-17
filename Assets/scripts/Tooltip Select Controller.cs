@@ -28,38 +28,38 @@ public class TooltipSelectController : MonoBehaviour
 
     void Update()
     {
-        trigger = triggerInputActionReference.action.ReadValue<float>();
+        // trigger = triggerInputActionReference.action.ReadValue<float>();
     }
 
     // Update is called once per frame
    void OnTriggerEnter(Collider other){
         
-        if (other.gameObject.CompareTag("Level Selector"))
-        {
-            if (trigger > 0.5f)
-            {
-                audioSource.Play();
-                // print("point is triggered "+other.gameObject.name);
-                if (other.gameObject.name == Easy)
-                {
-                    // print("easy");
-                    SceneManager.LoadScene(Easy);
-                }
-                if (other.gameObject.name == Hard)
-                {
-                    // print("medium");
-                    SceneManager.LoadScene(Hard);
-                }
-                if (other.gameObject.name == VeryHard)
-                {
-                    // print("hard");
-                    SceneManager.LoadScene(VeryHard);
-                }
-                if (other.gameObject.name == Menu)
-                {
-                    SceneManager.LoadScene(Menu);
-                }
-            }
-        }
+        // if (other.gameObject.CompareTag("Level Selector"))
+        // {
+        //     if (trigger > 0.5f)
+        //     {
+        //         audioSource.Play();
+        //         // print("point is triggered "+other.gameObject.name);
+        //         if (other.gameObject.name == Easy)
+        //         {
+        //             // print("easy");
+        //             SceneManager.LoadScene(Easy);
+        //         }
+        //         if (other.gameObject.name == Hard)
+        //         {
+        //             // print("medium");
+        //             SceneManager.LoadScene(Hard);
+        //         }
+        //         if (other.gameObject.name == VeryHard)
+        //         {
+        //             // print("hard");
+        //             SceneManager.LoadScene(VeryHard);
+        //         }
+        //         if (other.gameObject.name == Menu)
+        //         {
+        //             SceneManager.LoadScene(Menu);
+        //         }
+        //     }
+        // }
     }
 }

@@ -11,13 +11,12 @@ public class guiding : MonoBehaviour
     // public GameObject GuidingPointsObject;
     public GameObject[] guidingPoints;
 
+    public MyUtils myUtils;
 
     void Start()
     {
-        //find cihld called "Guiding Points" 
-        var Points=GameObject.Find("Guiding Points").GetComponentsInChildren<Transform>();
-        //add all child to array no matter what the name is
-        guidingPoints = Points.Skip(1).Select(p => p.gameObject).ToArray();
+        // myUtils=GameObject.Find("MyUtils").GetComponent<MyUtils>();
+        guidingPoints = myUtils.guidingPoints;
         if (guidingPoints.Length == 0)
         {
             Debug.Log("No guiding points found");
@@ -29,29 +28,19 @@ public class guiding : MonoBehaviour
             var startlocation = GameObject.Find("Drill Point").transform.position;
             //move the manipulator to the start location
             guidingManipulator.transform.position = startlocation;
-            // print("1st point location is " + firstPointLocation + "start location is " + startlocation);
-            Vector3 directionToTarget =    firstPointLocation - startlocation;
-            // print("direction to target is " + directionToTarget);
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-            targetRotation = Quaternion.Euler(270, 0, 0) * targetRotation;
-
-
-            // transform.rotation = targetRotation;
-            // print("rotation is " + targetRotation);
-            //print rotation in euler angle
-            // print("rotation in euler angle is " + targetRotation.eulerAngles);
-            //apply rotation to guiding manipulator
-            guidingManipulator.transform.rotation = targetRotation;
         }
-
-
-
+        
         
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
+        if (myUtils.isRestart)
+        {
+            print("Restarting guiding");
+            Start();
+        }
         if (guidingPoints.Length == 0)
         {
             // Debug.Log("No guiding points found");
@@ -69,10 +58,20 @@ public class guiding : MonoBehaviour
                 // targetRotation = Quaternion.Euler(270, 0, 0) * targetRotation;
             guidingManipulator.transform.rotation = targetRotation;
 
+            Plane pathPlane = myUtils.pathPlane;
+            Plane tip_plane = new Plane(guidingManipulator.transform.up, guidingManipulator.transform.position);
+
+            //find Dihedral Angle in degree
+            float angle = myUtils.CalculateDihedralAngle(tip_plane.normal, pathPlane.normal);
+            //rotate the manipulator base on current angle
+            guidingManipulator.transform.Rotate(0,0,angle,Space.Self);
+
             //if first guding point is deactivated, then deactivate the guiding manipulator
             if (guidingPoints[0].activeSelf == false)
             {
                 guidingManipulator.SetActive(false);
+            }else{
+                guidingManipulator.SetActive(true);
             }
         }
     }

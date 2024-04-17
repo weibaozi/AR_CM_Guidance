@@ -25,9 +25,9 @@ public class TooltipController : MonoBehaviour
     void Update()
     {
         //display count and distance
-        var distance_cm=distance*100;
-        distance_cm=distance_cm<0?0:distance_cm;
-        pointCountText.text = ("remain: "+pointCount.ToString());
+        // var distance_cm=distance*100;
+        // distance_cm=distance_cm<0?0:distance_cm;
+        // pointCountText.text = ("remain: "+pointCount.ToString());
         // pointCountText.text = ("remain:"+pointCount.ToString()+ "\n p: "+distance_cm.ToString("F2")+"cm");
         // pointCountText.text = pointCount.ToString();
         
