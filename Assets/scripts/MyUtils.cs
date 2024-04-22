@@ -11,7 +11,6 @@ public class MyUtils : MonoBehaviour
     {
         PreDrilling,
         Drilling,
-        Bending,
         Finished
     }
 
@@ -36,6 +35,8 @@ public class MyUtils : MonoBehaviour
 
     public bool restartFlag=false;
 
+    public bool isBending=false;
+
     public string currentLevel = "Easy";
     public Accuracy accuracy;
 
@@ -43,10 +44,17 @@ public class MyUtils : MonoBehaviour
 
     public GameObject RadarUI;
 
+    public GameObject bendPoint;
+
+    public Vector3 startLocation;
+
+    public UIInteract uIInteract;
+
     public void ReStart()
     {
         //restart the game
         isRestart=true;
+        isBending=false;
         //reactive guidingpoints
         // for (int i = 0; i < guidingPoints.Length; i++)
         // {
@@ -143,13 +151,39 @@ public class MyUtils : MonoBehaviour
 
     }
 
+    void placeStraightPoints(GameObject[] Points){
+        //find direction from drill point to Points and place the point in between
+        var direction = Points[Points.Length - 1].transform.position - startLocation; 
+
+        // Calculate the number of points needed to fill the gap
+        var numPoints = Points.Length;
+
+        // Place the points in between the drill point and the last point
+        for (int i = 0; i <= numPoints - 2; i++)
+        {
+            var newPosition= startLocation + direction/(numPoints) * (i+1)    ;
+            Points[i].transform.position = newPosition;
+        }
+    }
+
     void myStart(){
         // initial for guiding points
         // var Points=GameObject.Find("Guiding Points").GetComponentsInChildren<Transform>();
+        startLocation = GameObject.Find("Drill Point").transform.position;
         GameObject[] Points=GameObject.FindGameObjectsWithTag("Guiding Points");
+        GameObject[] bendPoints = GameObject.FindGameObjectsWithTag("BendPoint");
+
+        if (bendPoints.Length > 0)
+        {
+            bendPoint = bendPoints[0];
+        }
         //sort by name
         Points = Points.OrderBy(go => go.name).ToArray();
+        if (currentLevel == "S3"){
+            placeStraightPoints(Points);
+        }
         guidingPoints = Points.Select(p => p.gameObject).ToArray();
+
         nextPoint = guidingPoints[0];
         prevPoint = null;
         if (guidingPoints.Length == 0)
@@ -166,9 +200,11 @@ public class MyUtils : MonoBehaviour
 
         accuracy=GetComponent<Accuracy>();
         timer=GetComponent<Timer>();
+        
     }
     void Start()
     {
+        uIInteract.LoadLevel("S3");  
         myStart();
     }
 
@@ -186,6 +222,15 @@ public class MyUtils : MonoBehaviour
         else
         {
             nextPoint = activePoints[0];
+        }
+
+        if (bendPoint.activeSelf)
+        {
+            isBending=false;
+        }
+        else
+        {
+            isBending=true;
         }
     }
 

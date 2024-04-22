@@ -12,13 +12,19 @@ public class BarController : MonoBehaviour
 
     public GameObject ManipulatorObject;
 
+    public MyUtils myUtils;
+
+    private bool isBendingPoint = false;
+
+    private GameObject[] activePoints;
+
+    private GameObject nextPoint;
+
     public float BarRadius = 9.8f;
 
     public float scale = 0.5f;
 
     private GameObject CurrentPoint;
-
-    public bool isBendingPoint=false;
 
     private ARManipulator_Controller manipulatorController;
 
@@ -47,32 +53,15 @@ public class BarController : MonoBehaviour
         
     }
     void FixedUpdate(){
-        var activePoints = radarObjects.Where(p => p.activeSelf);
-        //number
-        if (activePoints.Count() == 0)
-        {
-            // Debug.Log("No guiding points found");
-            CurrentPoint=null;
-        }
-        else
-        {
-            CurrentPoint=activePoints.FirstOrDefault();
-            // print("current point is "+CurrentPoint);
-        }
-        // isBendingPoint=manipulatorController.isBendingPoint;
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        //find first active point
-        var activePoints = radarObjects.Where(p => p.activeSelf);
-        if (CurrentPoint == null)
+        nextPoint = myUtils.nextPoint;
+        isBendingPoint = myUtils.isBending;
+        if (nextPoint == null)
         {
             // Debug.Log("No guiding points found");
         }
         else
         {
-            float relativePositionX = centerObject.transform.InverseTransformPoint(CurrentPoint.transform.position).x;
+            float relativePositionX = centerObject.transform.InverseTransformPoint(nextPoint.transform.position).x;
             //times scale
             relativePositionX = relativePositionX * scale;
             //if x abs is larger than BarRadius, then set it to BarRadius
@@ -83,9 +72,11 @@ public class BarController : MonoBehaviour
             Vector3 radarPointLocation = new Vector3(relativePositionX, 0,0 );
             if (isBendingPoint)
             {
+                print("bending");
                 BarArrowObject.transform.localPosition = radarPointLocation;
             }
             
         }
     }
+    // Update is called once per fram
 }

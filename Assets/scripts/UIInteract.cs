@@ -64,9 +64,23 @@ public class UIInteract : MonoBehaviour
         myUtils.restartFlag = true;
     }
 
-    public void HardLevel()
+    public void LoadLevel(string level)
     {
-        print("Button Clicked");
+        print("load level" + level);
+        myUtils.currentLevel = level;
+        for (int i = 0; i < Levels.Length; i++)
+        {
+            if (Levels[i].name == level)
+            {
+                activeLevel(Levels[i]);
+            }
+            else
+            {
+                deactivateLevel(Levels[i]);
+            }
+        }
+        ReLoad();
+
     }    // Start is called before the first frame update
 
     public void RadarSwitch()

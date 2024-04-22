@@ -34,7 +34,7 @@ public class TooltipController : MonoBehaviour
     }
     void OnTriggerEnter(Collider other){
         // print("point is triggered"+other.gameObject.name);
-        if (other.gameObject.CompareTag("Guiding Points"))
+        if (other.gameObject.CompareTag("Guiding Points")|| other.gameObject.CompareTag("BendPoint"))
         {
             if (trigger > 0.5f)
             {
