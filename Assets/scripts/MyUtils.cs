@@ -37,7 +37,7 @@ public class MyUtils : MonoBehaviour
 
     public bool isBending=false;
 
-    public string currentLevel = "Easy";
+    public string currentLevel = "Easy1";
     public Accuracy accuracy;
 
     public Timer timer;
@@ -179,7 +179,7 @@ public class MyUtils : MonoBehaviour
         }
         //sort by name
         Points = Points.OrderBy(go => go.name).ToArray();
-        if (currentLevel == "S3"){
+        if (currentLevel == "Medium2"){
             placeStraightPoints(Points);
         }
         guidingPoints = Points.Select(p => p.gameObject).ToArray();
@@ -204,7 +204,7 @@ public class MyUtils : MonoBehaviour
     }
     void Start()
     {
-        uIInteract.LoadLevel("S3");  
+        // uIInteract.LoadLevel("S3");  
         myStart();
     }
 
