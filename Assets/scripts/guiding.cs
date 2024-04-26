@@ -59,12 +59,25 @@ public class guiding : MonoBehaviour
             guidingManipulator.transform.rotation = targetRotation;
 
             Plane pathPlane = myUtils.pathPlane;
-            Plane tip_plane = new Plane(guidingManipulator.transform.up, guidingManipulator.transform.position);
+            // Plane tip_plane = new Plane(guidingManipulator.transform.up, guidingManipulator.transform.position);
 
             //find Dihedral Angle in degree
-            float angle = myUtils.CalculateDihedralAngle(tip_plane.normal, pathPlane.normal);
+            float angle = myUtils.CalculateDihedralAngle(pathPlane.normal,guidingManipulator.transform.up);
             //rotate the manipulator base on current angle
+            print("angle: "+angle);
+            //calculate to rotate +angle or -angle
             guidingManipulator.transform.Rotate(0,0,angle,Space.Self);
+            float angle2=myUtils.CalculateDihedralAngle(pathPlane.normal,guidingManipulator.transform.up);
+            print("angle2: "+angle2);
+            if (angle2>5)
+            {
+                guidingManipulator.transform.Rotate(0,0,-angle*2,Space.Self);
+            }
+            // if (myUtils.CalculateDihedralAngle(pathPlane.normal,tip_plane.normal) > 5)
+            // {
+            //     guidingManipulator.transform.Rotate(0,0,-angle*2,Space.Self);
+            // }
+            // guidingManipulator.transform.Rotate(0,0,-180+angle,Space.Self);
 
             //if first guding point is deactivated, then deactivate the guiding manipulator
             if (guidingPoints[0].activeSelf == false)

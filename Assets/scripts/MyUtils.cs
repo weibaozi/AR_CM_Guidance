@@ -137,16 +137,23 @@ public class MyUtils : MonoBehaviour
     }
     var pointA = guidingPoints[0].transform;
     var pointC = guidingPoints[guidingPoints.Length -1 ].transform;
+    // var pointC = guidingPoints[4].transform;
 
     //random assign pointB
     var random_index = Random.Range(1, guidingPoints.Length - 1);
-    var pointB = guidingPoints[random_index].transform;
+    // var pointB = guidingPoints[random_index].transform;
+    var pointB = guidingPoints[4].transform;
 
     //find the plane
     Vector3 center = (pointA.position + pointB.position + pointC.position) / 3;
-    Vector3 normal = Vector3.Cross(pointB.position - pointA.position, pointC.position - pointA.position).normalized;
+    Vector3 normal = Vector3.Cross(pointC.position - pointA.position,pointB.position - pointA.position).normalized;
+    // Vector3 normal = Vector3.Cross(pointB.position - pointA.position,pointC.position - pointA.position).normalized;
     Plane plane = new Plane(normal, center);
     pathPlane = plane;
+    Debug.DrawLine(center, center + normal, Color.red, 1000f);
+    // Debug.DrawLine(pointA.position, pointB.position, Color.white, 1000f);
+    // Debug.DrawLine(pointA.position, pointC.position, Color.green, 1000f);
+    print("drawed line");
     // print("!!Plane is " + plane);
 
     }
@@ -179,9 +186,9 @@ public class MyUtils : MonoBehaviour
         }
         //sort by name
         Points = Points.OrderBy(go => go.name).ToArray();
-        if (currentLevel == "Medium2"){
-            placeStraightPoints(Points);
-        }
+        // if (currentLevel == "Medium1"){
+        //     placeStraightPoints(Points);
+        // }
         guidingPoints = Points.Select(p => p.gameObject).ToArray();
 
         nextPoint = guidingPoints[0];
@@ -204,7 +211,7 @@ public class MyUtils : MonoBehaviour
     }
     void Start()
     {
-        // uIInteract.LoadLevel("S3");  
+        uIInteract.LoadLevel("Easy1");  
         myStart();
     }
 
