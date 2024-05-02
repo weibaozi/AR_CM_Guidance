@@ -64,11 +64,11 @@ public class guiding : MonoBehaviour
             //find Dihedral Angle in degree
             float angle = myUtils.CalculateDihedralAngle(pathPlane.normal,guidingManipulator.transform.up);
             //rotate the manipulator base on current angle
-            print("angle: "+angle);
+            // print("angle: "+angle);
             //calculate to rotate +angle or -angle
             guidingManipulator.transform.Rotate(0,0,angle,Space.Self);
             float angle2=myUtils.CalculateDihedralAngle(pathPlane.normal,guidingManipulator.transform.up);
-            print("angle2: "+angle2);
+            // print("angle2: "+angle2);
             if (angle2>5)
             {
                 guidingManipulator.transform.Rotate(0,0,-angle*2,Space.Self);
