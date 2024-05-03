@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq; 
 using System.Text;
 using System.IO;
+using TMPro;
+using UnityEngine.UI;
 public class MyUtils : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -11,6 +13,17 @@ public class MyUtils : MonoBehaviour
     {
         PreDrilling,
         Drilling,
+        Finished
+    }
+
+    public enum TutorialState
+    {
+        HitPoint,
+        Radar,
+        RotationArrow,
+        VerticalBar,
+        HorizontalBar,
+
         Finished
     }
 
@@ -24,6 +37,8 @@ public class MyUtils : MonoBehaviour
     public GameObject prevPoint;
 
     public State state=State.PreDrilling;
+
+    public TutorialState tutorialState=TutorialState.HitPoint;
 
     public Plane pathPlane;
 
@@ -49,6 +64,20 @@ public class MyUtils : MonoBehaviour
     public Vector3 startLocation;
 
     public UIInteract uIInteract;
+
+    public TextMeshPro tutorialText;
+
+    public GameObject tutorialTextPlate;
+
+    public GameObject guidingManipulator;
+
+    public GameObject RadarPoint;
+
+    public GameObject RotationArrow;
+
+    public GameObject VerticalArrow;
+
+    public GameObject HorizontalArrow;
 
     public void ReStart()
     {
@@ -140,9 +169,12 @@ public class MyUtils : MonoBehaviour
     // var pointC = guidingPoints[4].transform;
 
     //random assign pointB
-    var random_index = Random.Range(1, guidingPoints.Length - 1);
+    // var random_index = Random.Range(1, guidingPoints.Length - 1);
     // var pointB = guidingPoints[random_index].transform;
-    var pointB = guidingPoints[4].transform;
+    //assign pointB as the middle point
+    var Length = guidingPoints.Length;
+    var pointB = guidingPoints[(Length-1)/2].transform;
+    // var pointB = guidingPoints[4].transform;
 
     //find the plane
     Vector3 center = (pointA.position + pointB.position + pointC.position) / 3;
@@ -172,7 +204,64 @@ public class MyUtils : MonoBehaviour
             Points[i].transform.position = newPosition;
         }
     }
+    void setChildMesh(GameObject parent, bool isVisual){
+        //search for mesh renderer in children and children's children
+        var mesh = parent.GetComponent<MeshRenderer>();
+        if (mesh != null)
+        {
+            mesh.enabled = isVisual;
+        }
+        foreach (Transform child in parent.transform)
+        {
+            setChildMesh(child.gameObject,isVisual);
+        }
+    }
 
+    void TutorialUpdate(){
+        state = State.Drilling;
+
+        if (tutorialState == TutorialState.HitPoint){
+            tutorialText.text = "Hit the point with the drill";
+            if (activePoints.Length == 0){
+                tutorialState = TutorialState.Radar;
+                guidingPoints[1].SetActive(true);
+                RadarPoint.GetComponent<MeshRenderer>().enabled = true;
+            }
+        }else if (tutorialState == TutorialState.Radar){
+            tutorialText.text = "Watch the radar to drill the point";
+            if (activePoints.Length == 0){
+                tutorialState = TutorialState.RotationArrow;
+                guidingPoints[2].SetActive(true);
+                RotationArrow.GetComponent<RawImage>().enabled = true;
+            }
+        }else if (tutorialState == TutorialState.RotationArrow){
+            tutorialText.text = "Align the red arrow the yellow line in the radar while keeping the red point in the center.";
+            if (activePoints.Length == 0){
+                tutorialState = TutorialState.VerticalBar;
+                guidingPoints[3].SetActive(true);
+                VerticalArrow.GetComponent<RawImage>().enabled = true;
+            }
+        }else if (tutorialState == TutorialState.VerticalBar){
+            tutorialText.text = "The vertical arrow indicate the distance to the next point.";
+            if (activePoints.Length == 0){
+                tutorialState = TutorialState.HorizontalBar;
+                guidingPoints[4].SetActive(true);
+                HorizontalArrow.GetComponent<RawImage>().enabled = true;
+                isBending=true;
+            }
+        }else if (tutorialState == TutorialState.HorizontalBar){
+            tutorialText.text = "Use the horizontal arrow indicate time to bend the drill(press trigger).";
+            if (activePoints.Length == 0){
+                tutorialState = TutorialState.Finished;
+                // guidingPoints[0].SetActive(true);
+            }
+        }else if (tutorialState == TutorialState.Finished){
+            tutorialText.text = "Tutorial Finished";
+            state = State.Finished;
+
+        }
+
+    }
     void myStart(){
         // initial for guiding points
         // var Points=GameObject.Find("Guiding Points").GetComponentsInChildren<Transform>();
@@ -207,12 +296,37 @@ public class MyUtils : MonoBehaviour
 
         accuracy=GetComponent<Accuracy>();
         timer=GetComponent<Timer>();
+
+        if (currentLevel == "Tutorial")
+        {
+            tutorialTextPlate.SetActive(true);
+            setChildMesh(guidingManipulator,false);
+            tutorialState = TutorialState.HitPoint;
+            //set the four guiding object mesh to false
+            RadarPoint.GetComponent<MeshRenderer>().enabled = false;
+            RotationArrow.GetComponent<RawImage>().enabled = false;
+            VerticalArrow.GetComponent<RawImage>().enabled = false;
+            HorizontalArrow.GetComponent<RawImage>().enabled = false;
+            for (int i = 1; i < guidingPoints.Length; i++)
+            {
+                guidingPoints[i].SetActive(false);
+            }
+        }else{
+            tutorialTextPlate.SetActive(false);
+            setChildMesh(guidingManipulator,true);
+            RadarPoint.GetComponent<MeshRenderer>().enabled = true;
+            RotationArrow.GetComponent<RawImage>().enabled = true;
+            VerticalArrow.GetComponent<RawImage>().enabled = true;
+            HorizontalArrow.GetComponent<RawImage>().enabled = true;
+        }
         
     }
     void Start()
     {
-        uIInteract.LoadLevel("Easy1");  
+        // uIInteract.LoadLevel("Easy1");  
+        
         myStart();
+        uIInteract.LoadLevel("Tutorial");  
     }
 
     // Update is called once per frame
@@ -248,6 +362,7 @@ public class MyUtils : MonoBehaviour
             isRestart=false;
         }
         PointUpdate();
+        TutorialUpdate();
         //if first guiding point is deactivated, change state to drilling
         if (state == State.PreDrilling && guidingPoints[0].activeSelf == false)
         {

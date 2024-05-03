@@ -44,7 +44,7 @@ public class NewRadar : MonoBehaviour
         Plane tip_plane = new Plane(centerObject.transform.forward, centerObject.transform.position);
         //find Dihedral Angle in degree
         float angle = myUtils.CalculateDihedralAngle(tip_plane.normal, pathPlane.normal);
-        rotationArrow.transform.localEulerAngles = new Vector3(0, 0, angle);
+        rotationArrow.transform.localEulerAngles = new Vector3(0, 0, angle+180);
 
     }
     void Start()
@@ -74,9 +74,10 @@ public class NewRadar : MonoBehaviour
         activePoints = myUtils.activePoints;
         nextPoint = myUtils.nextPoint;
         //number
-        //find global y axis distance 
+        //find global l2 distance
         if (nextPoint!=null){
-            verticalBarController.distance= (float)(nextPoint.transform.position.y-centerObject.transform.position.y);
+            // verticalBarController.distance= (float)(nextPoint.transform.position.y-centerObject.transform.position.y);
+            verticalBarController.distance=  Vector3.Distance(nextPoint.transform.position,centerObject.transform.position);
             align_rotation_arrow();
         }
         if (myUtils.isRestart){
