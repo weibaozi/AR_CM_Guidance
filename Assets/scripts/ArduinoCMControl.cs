@@ -59,7 +59,11 @@ public class ArduinoCMControl : MonoBehaviour
         
         //set bend status depends on CMSignal
         CMSignal = uDPListener.CMSignal;
-        float bendAngle = (CMSignal-730)/60;
+        float bendAngle = (CMSignal-740)/60;
+        if (bendAngle < 0)
+        {
+            bendAngle = 0;
+        }
         // print("CMSignal: " + CMSignal);
         // print("bendAngle: " + bendAngle);
         if (CMSignal > maxAngel)

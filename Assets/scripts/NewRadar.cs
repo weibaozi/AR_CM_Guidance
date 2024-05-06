@@ -45,6 +45,7 @@ public class NewRadar : MonoBehaviour
         //find Dihedral Angle in degree
         float angle = myUtils.CalculateDihedralAngle(tip_plane.normal, pathPlane.normal);
         rotationArrow.transform.localEulerAngles = new Vector3(0, 0, angle+180);
+        print("angle is "+angle);
 
     }
     void Start()

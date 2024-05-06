@@ -79,6 +79,8 @@ public class MyUtils : MonoBehaviour
 
     public GameObject HorizontalArrow;
 
+    public GameObject CM;
+
     public void ReStart()
     {
         //restart the game
@@ -178,15 +180,17 @@ public class MyUtils : MonoBehaviour
 
     //find the plane
     Vector3 center = (pointA.position + pointB.position + pointC.position) / 3;
+
     Vector3 normal = Vector3.Cross(pointC.position - pointA.position,pointB.position - pointA.position).normalized;
     // Vector3 normal = Vector3.Cross(pointB.position - pointA.position,pointC.position - pointA.position).normalized;
     Plane plane = new Plane(normal, center);
+    print("!!C-A is " + (pointC.position - pointA.position) + "!!B-A is " + (pointB.position - pointA.position) + "!!normal is " + normal + "!!center is " + center);
     pathPlane = plane;
-    Debug.DrawLine(center, center + normal, Color.red, 1000f);
+    // Debug.DrawLine(center, center + normal, Color.green, 1000f);
     // Debug.DrawLine(pointA.position, pointB.position, Color.white, 1000f);
     // Debug.DrawLine(pointA.position, pointC.position, Color.green, 1000f);
-    print("drawed line");
-    // print("!!Plane is " + plane);
+    // print("drawed line");
+    print("!!Plane is " + plane);
 
     }
 
@@ -219,7 +223,9 @@ public class MyUtils : MonoBehaviour
 
     void TutorialUpdate(){
         state = State.Drilling;
-
+        if (currentLevel != "Tutorial"){
+            return;
+        }
         if (tutorialState == TutorialState.HitPoint){
             tutorialText.text = "Hit the point with the drill";
             if (activePoints.Length == 0){
@@ -247,12 +253,17 @@ public class MyUtils : MonoBehaviour
                 tutorialState = TutorialState.HorizontalBar;
                 guidingPoints[4].SetActive(true);
                 HorizontalArrow.GetComponent<RawImage>().enabled = true;
+                guidingPoints[4].transform.parent=CM.transform;
+                guidingPoints[4].transform.localPosition=new Vector3((float)-14.8,-9,(float)-0.2);
+                bendPoint.SetActive(false);
                 isBending=true;
+                
             }
         }else if (tutorialState == TutorialState.HorizontalBar){
             tutorialText.text = "Use the horizontal arrow indicate time to bend the drill(press trigger).";
             if (activePoints.Length == 0){
                 tutorialState = TutorialState.Finished;
+                guidingPoints[4].transform.parent=guidingPoints[3].transform.parent.transform;
                 // guidingPoints[0].SetActive(true);
             }
         }else if (tutorialState == TutorialState.Finished){
@@ -291,7 +302,8 @@ public class MyUtils : MonoBehaviour
             Debug.Log("guiding points found");
             nextPoint = guidingPoints[0];
         }
-
+        //print points length
+        print("!!Points length is " + Points.Length);
         find_path_plane();
 
         accuracy=GetComponent<Accuracy>();
@@ -312,6 +324,7 @@ public class MyUtils : MonoBehaviour
                 guidingPoints[i].SetActive(false);
             }
         }else{
+            tutorialState = TutorialState.Finished;
             tutorialTextPlate.SetActive(false);
             setChildMesh(guidingManipulator,true);
             RadarPoint.GetComponent<MeshRenderer>().enabled = true;
