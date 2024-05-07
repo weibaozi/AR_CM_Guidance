@@ -40,6 +40,12 @@ public class NewRadar : MonoBehaviour
     }
     void align_rotation_arrow()
     {
+        //if current level's name contains easy, make the rotation always 0
+        if (myUtils.currentLevel.Contains("Easy"))
+        {
+            rotationArrow.transform.localEulerAngles = new Vector3(0, 0, 0);
+            return;
+        }
 
         Plane tip_plane = new Plane(centerObject.transform.forward, centerObject.transform.position);
         //find Dihedral Angle in degree
